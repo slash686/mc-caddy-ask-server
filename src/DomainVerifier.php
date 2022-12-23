@@ -4,7 +4,7 @@ namespace Slash686\McCaddyAskServer;
 
 class DomainVerifier
 {
-    private array $blacklistedDomain = [
+    private $blacklistedDomains = [
         'marketcall.ru',
         'marketcall.com',
     ];
@@ -15,7 +15,7 @@ class DomainVerifier
             return false;
         }
 
-        foreach ($this->blacklistedDomain as $blacklistedDomain) {
+        foreach ($this->blacklistedDomains as $blacklistedDomain) {
             if (\Slash686\str_ends_with($domain, $blacklistedDomain)) {
                 return false;
             }
