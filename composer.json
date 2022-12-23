@@ -1,0 +1,24 @@
+{
+    "name": "slash686/mc-caddy-ask-server",
+    "description": "Simple HTTP client for handling ask requests from Caddy",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Slash686\\McCaddyAskServer\\": "src/"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Aleksandr Krivtcun",
+            "email": "a.krivtcun@gmail.com"
+        }
+    ],
+    "require": {
+        "ext-mbstring": "*",
+        "ext-json": "*",
+        "ext-http": "*"
+    }
+}
