@@ -13,6 +13,11 @@ function str_ends_with(string $haystack, string $needle): bool
     return substr($haystack, -$length) === $needle;
 }
 
+function str_starts_with(string $haystack, string $needle): bool
+{
+    return strpos($haystack, $needle) === 0;
+}
+
 function json_response(array $data, int $httpCode = 200): void
 {
     http_response_code($httpCode);
