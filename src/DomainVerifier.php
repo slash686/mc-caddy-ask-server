@@ -7,6 +7,7 @@ class DomainVerifier
     private $blacklistedDomains = [
         'marketcall.ru',
         'marketcall.com',
+        'saveautocare.com',
     ];
 
     private $blacklistedSubdomains = [
