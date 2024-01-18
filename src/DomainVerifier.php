@@ -8,6 +8,7 @@ class DomainVerifier
         'marketcall.ru',
         'marketcall.com',
         'saveautocare.com',
+        'plumbing-usa.org',
     ];
 
     private $blacklistedSubdomains = [
