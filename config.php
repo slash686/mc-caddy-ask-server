@@ -1,5 +1,8 @@
 <?php
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 return [
     'database' => [
         'driver' => 'sqlite',
@@ -17,5 +20,9 @@ return [
             'git',
             'gitlab',
         ],
+    ],
+
+    'auth' => [
+        'token' => $_ENV['AUTH_TOKEN'],
     ],
 ];

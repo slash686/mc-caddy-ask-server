@@ -1,13 +1,7 @@
 <?php
 
-use Slash686\McCaddyAskServer\Logger;
-use Slash686\McCaddyAskServer\Domain;
+use Slash686\McCaddyAskServer\Router;
 use Slash686\McCaddyAskServer\Database;
-use Slash686\McCaddyAskServer\DomainVerifier;
-use Slash686\McCaddyAskServer\Verifiers\BlacklistedDomainVerifier;
-use Slash686\McCaddyAskServer\Verifiers\WhitelistedDomainVerifier;
-use Slash686\McCaddyAskServer\Verifiers\BlacklistedSubDomainVerifier;
-use function Slash686\json_response;
 
 require __DIR__.'/../vendor/autoload.php';
 
@@ -15,56 +9,20 @@ if (!defined('STDOUT')) {
     define('STDOUT', fopen('php://stdout', 'wb'));
 }
 
-$config = require '../config.php';
+$container = new \Slash686\McCaddyAskServer\Container();
 
-$logger = new Logger();
+$container->bind(Database::class, function () {
+    $config = require '../config.php';
+    return new Database($config['database']);
+});
 
-if (!isset($_GET['domain'])) {
-    json_response([
-        'error' => [
-            'message' => $message = 'Domain is not provided.',
-        ],
-    ], 422);
+\Slash686\McCaddyAskServer\App::setContainer($container);
 
-    $logger->log("Disallowed: $message");
+$router = new Router();
 
-    return;
-}
+require '../routes.php';
 
-try {
-    $domain = Domain::fromString((string) $_GET['domain']);
-} catch (InvalidArgumentException $exception) {
-    json_response([
-        'error' => [
-            'message' => $message = 'Domain is empty.',
-        ],
-    ], 422);
+$uri = parse_url($_SERVER['REQUEST_URI'])['path'];
+$method = $_SERVER['REQUEST_METHOD'];
 
-    $logger->log("Disallowed: $message");
-
-    return;
-}
-
-$domainVerifier = new DomainVerifier(
-    new BlacklistedDomainVerifier($config['domain-verifier']['blacklisted-domains']),
-    new BlacklistedSubDomainVerifier($config['domain-verifier']['blacklisted-sub-domains']),
-    new WhitelistedDomainVerifier(
-        new Database($config['database']),
-    )
-);
-
-if (!$domainVerifier->isValid($domain)) {
-    json_response([
-        'error' => [
-            'message' => $message = 'Domain is not allowed.',
-        ],
-    ], 400);
-
-    $logger->log("Disallowed: $message - {$domain->value()}");
-
-    return;
-}
-
-json_response([], 200);
-
-$logger->log("Allowed - {$domain->value()}");
+$router->route($uri, $method);
