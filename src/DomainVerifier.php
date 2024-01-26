@@ -2,34 +2,23 @@
 
 namespace Slash686\McCaddyAskServer;
 
+
+use Slash686\McCaddyAskServer\Verifiers\DomainVerifier as DomainVerifierContract;
+
 class DomainVerifier
 {
-    private $blacklistedDomains = [
-        'marketcall.ru',
-        'marketcall.com',
-        'saveautocare.com',
-        'plumbing-usa.org',
-    ];
+    /** @var DomainVerifier[] */
+    private $verifiers;
 
-    private $blacklistedSubdomains = [
-        'git',
-        'gitlab',
-    ];
-
-    public function isValid(string $domain): bool
+    public function __construct(DomainVerifierContract ...$verifiers)
     {
-        if (!$domain) {
-            return false;
-        }
+        $this->verifiers = $verifiers;
+    }
 
-        foreach ($this->blacklistedDomains as $blacklistedDomain) {
-            if (\Slash686\str_ends_with($domain, $blacklistedDomain)) {
-                return false;
-            }
-        }
-
-        foreach ($this->blacklistedSubdomains as $blacklistedSubdomain) {
-            if (\Slash686\str_starts_with($domain, $blacklistedSubdomain.'.')) {
+    public function isValid(Domain $domain): bool
+    {
+        foreach ($this->verifiers as $verifier) {
+            if (!$verifier->isValid($domain)) {
                 return false;
             }
         }

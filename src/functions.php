@@ -26,3 +26,12 @@ function json_response(array $data, int $httpCode = 200): void
 
     echo json_encode($data, JSON_THROW_ON_ERROR);
 }
+
+function dd(...$vars): void
+{
+    foreach ($vars as $var) {
+        var_dump($var);
+    }
+
+    die();
+}
